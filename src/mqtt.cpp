@@ -46,14 +46,9 @@ namespace mqtt
         }
     }
 
-    void publish(String topic, String message)
+    void publish(const String topic, const String message)
     {
-        JsonDocument data;
-        String buffer;
-        data["id"] = ID;
-        data["message"] = message;
-        serializeJson(data, buffer);
-        client.publish(topic.c_str(), buffer.c_str());
+        client.publish(topic.c_str(), message.c_str());
     }
 
     void connect()
@@ -73,13 +68,11 @@ namespace mqtt
                     break;
                 else
                     Serial.print(client.state());
-                    Serial.print(" ");
+                Serial.print(" ");
                 delay(5000);
             }
 
-            
-
-            last_broker_index = (last_broker_index + 1) % MQTT_LIST.size();
+            // last_broker_index = (last_broker_index + 1) % MQTT_LIST.size();
         }
 
         Serial.println("Connected");
@@ -87,7 +80,8 @@ namespace mqtt
 
     void loop()
     {
-        if (!client.connected()) setup();
+        if (!client.connected())
+            setup();
         client.loop();
     }
 
@@ -95,7 +89,7 @@ namespace mqtt
     {
         Serial.print("[mqtt]:");
         client.setStream(Serial)
-              .setCallback(handler);
+            .setCallback(handler);
         connect();
     }
 }

@@ -1,13 +1,13 @@
 #include "state_control.h"
 #include "env.h"
-#include "cloud.h"
 #include "net.h"
 #include "mqtt.h"
 #include <WiFi.h>
 #include <Arduino.h>
 #include <map>
 
-using State_control::traffic_light, State_control::state;
+using State_control::state;
+using State_control::traffic_light;
 
 /*==================================================*/
 
@@ -32,6 +32,8 @@ String south_state, west_state;
 void setup()
 {
     Serial.begin(9600);
+    while (!Serial)
+        ;
     for (int i = 0; i < 3; i++)
     {
         pinMode(south_pin[i], OUTPUT);
@@ -45,19 +47,17 @@ void setup()
 
     net::setup();
     mqtt::setup();
-
-    cloud::add(south_state, Permission::Read, Priority::Local, Update_Policy::Change);
-    cloud::setup();
 }
 
 void loop()
 {
     net::loop();
     mqtt::loop();
+    south_state = south.get_state();
+    west_state = west.get_state();
+    mqtt::publish("config/0/input/south", south_state);
     if (south.change())
         Serial.print("South ");
     if (west.change())
         Serial.print("West ");
-    south_state = south.get_state();
-    west_state = west.get_state();
 }

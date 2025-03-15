@@ -43,7 +43,6 @@ namespace net
         Serial.print("Network: ");
 
         WiFi.mode(WIFI_STA);
-        wifi.setCACert(CERTIFICATE);
 
         while (status != WL_CONNECTED)
         {
@@ -53,6 +52,7 @@ namespace net
                 Serial.println(wifi.first);
                 status = WiFi.begin(wifi.first, wifi.second);
                 delay(15000);
+                Serial.println(status);
                 if (status == WL_CONNECTED)
                     break;
             }
@@ -63,6 +63,7 @@ namespace net
 
     void loop()
     {
-        if (!wifi.connected()) setup();
+        if (!wifi.connected())
+            setup();
     }
 }
