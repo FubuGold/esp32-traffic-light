@@ -8,7 +8,7 @@ namespace net
 {
     extern int status;
 
-    extern WiFiClientSecure wifi;
+    extern WiFiClient wifi;
 
     void read_response();
     void printWifiStatus();

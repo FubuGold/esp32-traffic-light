@@ -4,7 +4,7 @@ namespace net
 {
     int status = WL_IDLE_STATUS;
 
-    WiFiClientSecure wifi;
+    WiFiClient wifi;
 
     void read_response()
     {
@@ -49,10 +49,17 @@ namespace net
             // Try to connect to one of the wifi
             for (const auto &wifi : WIFI_LIST)
             {
-                Serial.println(wifi.first);
-                status = WiFi.begin(wifi.first, wifi.second);
-                delay(15000);
-                Serial.println(status);
+                WiFi.begin(wifi.first, wifi.second);
+
+                while (true)
+                {
+                    Serial.println(wifi.first);
+                    status = WiFi.status();
+                    delay(15000);
+                    Serial.println(status);
+                    if (status == WL_CONNECTED)
+                        break;
+                }
                 if (status == WL_CONNECTED)
                     break;
             }

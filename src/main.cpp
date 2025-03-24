@@ -23,7 +23,7 @@ std::map<String, uint64_t> duration = {
     {"green blink4", 500},
     {"yellow", 3000}};
 // [led][G = 0, Y = 1, R = 2]
-std::vector<uint8_t> south_pin = {4, 16, 17}, west_pin = {19, 18, 5};
+std::vector<uint8_t> south_pin = {15, 2, 4}, west_pin = {19, 18, 5};
 
 traffic_light south("south", south_pin, duration), west("west", west_pin, duration);
 
@@ -47,17 +47,27 @@ void setup()
 
     net::setup();
     mqtt::setup();
+    south_state = south.get_state();
+    west_state = west.get_state();
+    mqtt::publish("config/0/input/south", south_state);
+    mqtt::publish("config/0/input/west", west_state);
 }
 
 void loop()
 {
     net::loop();
     mqtt::loop();
-    south_state = south.get_state();
-    west_state = west.get_state();
-    mqtt::publish("config/0/input/south", south_state);
+
     if (south.change())
+    {
+        south_state = south.get_state();
         Serial.print("South ");
+        mqtt::publish("config/0/input/south", south_state);
+    }
     if (west.change())
+    {
+        west_state = west.get_state();
         Serial.print("West ");
+        mqtt::publish("config/0/input/west", west_state);
+    }
 }
