@@ -23,51 +23,46 @@ std::map<String, uint64_t> duration = {
     {"green blink4", 500},
     {"yellow", 3000}};
 // [led][G = 0, Y = 1, R = 2]
-std::vector<uint8_t> south_pin = {15, 2, 4}, west_pin = {19, 18, 5};
+std::vector<uint8_t> start_pin = {35, 36, 37};
 
-traffic_light south("south", south_pin, duration), west("west", west_pin, duration);
+traffic_light start("start", start_pin, duration);
 
-String south_state, west_state;
+String start_state, west_state;
 
 void setup()
 {
     Serial.begin(9600);
-    while (!Serial)
-        ;
+    // while (!Serial)
+    //     ;
     for (int i = 0; i < 3; i++)
     {
-        pinMode(south_pin[i], OUTPUT);
-        pinMode(west_pin[i], OUTPUT);
+        pinMode(start_pin[i], OUTPUT);
     }
-    south.set_state(0);
-    west.set_state(3);
+    start.set_state(0);
     uint64_t cur = millis();
-    south.set_time(cur);
-    west.set_time(cur);
+    start.set_time(cur);
 
     net::setup();
-    mqtt::setup();
-    south_state = south.get_state();
-    west_state = west.get_state();
-    mqtt::publish("config/0/input/south", south_state);
-    mqtt::publish("config/0/input/west", west_state);
+    // mqtt::setup();
+    start_state = start.get_state();
+    // mqtt::publish("config/0/input/start", start_state);
+    Serial.println("Setup complete");
 }
 
 void loop()
 {
-    net::loop();
-    mqtt::loop();
+    // Serial.println("Alive");
+    // digitalWrite(start_pin[1], HIGH);
+    // delay(3000);
+    // digitalWrite(start_pin[1], LOW);
+    // delay(3000);
+    // net::loop();
+    // mqtt::loop();
 
-    if (south.change())
+    if (start.change())
     {
-        south_state = south.get_state();
-        Serial.print("South ");
-        mqtt::publish("config/0/input/south", south_state);
-    }
-    if (west.change())
-    {
-        west_state = west.get_state();
-        Serial.print("West ");
-        mqtt::publish("config/0/input/west", west_state);
+        start_state = start.get_state();
+        Serial.print("start ");
+        // mqtt::publish("config/0/input/start", start_state);
     }
 }
