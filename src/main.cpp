@@ -43,9 +43,9 @@ void setup()
     start.set_time(cur);
 
     net::setup();
-    // mqtt::setup();
+    mqtt::setup();
     start_state = start.get_state();
-    // mqtt::publish("config/0/input/start", start_state);
+    mqtt::publish("config/0/input/start", start_state);
     Serial.println("Setup complete");
 }
 
@@ -56,13 +56,14 @@ void loop()
     // delay(3000);
     // digitalWrite(start_pin[1], LOW);
     // delay(3000);
-    // net::loop();
-    // mqtt::loop();
+    net::loop();
+    mqtt::loop();
 
     if (start.change())
     {
         start_state = start.get_state();
         Serial.print("start ");
-        // mqtt::publish("config/0/input/start", start_state);
+        Serial.println(start_state);
+        mqtt::publish("config/0/input/start", start_state);
     }
 }
